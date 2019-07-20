@@ -2,6 +2,7 @@ import Vue from 'vue';
 import QS from 'qs';
 import ElementUI from 'element-ui';
 import animate from 'animate.css';
+import VCharts from 'v-charts';
 import App from './App.vue';
 import router from './router';
 import 'element-ui/lib/theme-chalk/index.css';
@@ -11,6 +12,7 @@ import 'font-awesome/css/font-awesome.min.css';
 Vue.prototype.qs = QS;
 
 Vue.use(ElementUI);
+Vue.use(VCharts);
 Vue.use(animate);
 
 Vue.config.productionTip = false;

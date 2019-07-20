@@ -1,15 +1,14 @@
 import axios from 'axios';
 import qs from 'qs';
 
-// 创建axios实例
+// Create Axios instance
 const service = axios.create({
   paramsSerializer(params) {
     return qs.stringify(params, {
       arrayFormat: 'repeat',
     });
   },
-  // 请求超时时间
-  timeout: 5000,
+  // timeout: 5000,
   headers: { 'Content-Type': 'application/json;charset=utf-8' },
   withCredentials: true,
 });
@@ -26,34 +25,30 @@ service.interceptors.response.use(
 );
 
 export default {
-  async userSignIn() {
-    const response = await service({
-      url: '/api',
+  userSignIn(params) {
+    return service({
+      url: '/api/get_watched_movies',
       method: 'get',
+      params,
     });
-
-    return response;
   },
 
-  async userSignUp() {
-    const response = await service({
-      url: '/api',
+  userSignUp(params) {
+    return service({
+      url: '/api/register',
       method: 'get',
+      params,
     });
-
-    return response;
   },
 
-  async submitSelection(selected) {
-    const response = await service({
-      url: '/api',
-      method: 'put',
+  submitSelection(selected) {
+    return service({
+      url: '/api/get_classification',
+      method: 'post',
       data: {
-        selected,
+        classification: selected,
       },
     });
-
-    return response;
   },
 
   getRecommend(userId) {
@@ -62,7 +57,7 @@ export default {
       method: 'get',
       params: {
         target_user_id: userId,
-        top_n: 10,
+        top_n: 15,
       },
     });
   },
@@ -73,6 +68,25 @@ export default {
       url: '/api/get_watched_movies',
       method: 'get',
       params,
+    });
+  },
+
+  submitRating(params) {
+    return service({
+      url: '/api/watch_movie',
+      method: 'get',
+      params,
+    });
+  },
+
+  getAnalysis(id) {
+    return service({
+      url: '/api/get_bar',
+      method: 'get',
+      params: {
+        target_user_id: id,
+        top_n: 10,
+      },
     });
   },
 };

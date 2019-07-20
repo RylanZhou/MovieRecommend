@@ -31,6 +31,7 @@ import config from './common';
 import API from '../api';
 
 export default {
+  name: 'Choose',
   data() {
     return {
       genreMap: config.genreMapJson,
@@ -70,12 +71,25 @@ export default {
       }
     },
     async submit() {
-      this.pageLoading = true;
       try {
-        await API.submitSelection(this.selectProps);
+        this.pageLoading = true;
+        const params = this.selectProps.map(selection => selection.prop);
+        await API.submitSelection(params);
+        this.$message.success('提交成功');
+        this.$router.push({
+          name: 'Recommend',
+          query: {
+            userId: this.$route.query.userId,
+            fromRegister: true,
+          },
+          params: {
+            selected: params,
+          },
+        });
       } catch (error) {
         console.log(error);
       }
+      this.pageLoading = false;
     },
   },
 };
@@ -98,7 +112,6 @@ export default {
     position: relative;
     height: calc(60% + 40px);
     margin: 0 100px;
-    // animation: show-genre .5s 2s forwards;
 
     div {
       position: absolute;

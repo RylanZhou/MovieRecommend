@@ -10,10 +10,29 @@
     <img id="roll2" src="./assets/roll.svg">
     <img id="roll3" src="./assets/roll.svg">
     <transition name="slide" mode="out-in">
-      <router-view/>
+      <router-view v-if="isRouterAlive"/>
     </transition>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      isRouterAlive: true,
+    };
+  },
+  methods: {
+    reload() {
+      this.isRouterAlive = false;
+      this.$nextTick(() => {
+        this.isRouterAlive = true;
+      });
+    },
+  },
+};
+
+</script>
 
 <style lang="scss">
 * {
@@ -23,7 +42,7 @@
 
 body {
   margin: 0;
-  font-family: 'Montserrat', sans-serif, 'PingFang SC';
+  font-family: 'Montserrat', sans-serif;
   background-color: #f6f5f7;
   overflow: hidden;
 }

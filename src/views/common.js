@@ -25,7 +25,7 @@ export default {
     Action: '动作',
     Adventure: '冒险',
     Animation: '动画',
-    'Children\'s': '儿童',
+    Children: '儿童',
     Comedy: '喜剧',
     Crime: '犯罪',
     Documentary: '纪录',

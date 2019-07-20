@@ -16,9 +16,9 @@
             </a>
           </div>
           <span>or use your email for registration</span> -->
-          <input type="text" placeholder="用户名" />
-          <input type="password" placeholder="密码" />
-          <input type="password" placeholder="确认密码" />
+          <input v-model="signUpForm.username" type="text" placeholder="用户名" />
+          <input v-model="signUpForm.password" type="password" placeholder="密码" />
+          <input v-model="signUpForm.confirm" type="password" placeholder="确认密码" />
           <button @click="signUp">注 册</button>
           <transition name="el-fade-in-linear">
             <div class="check" v-show="registered">
@@ -26,7 +26,7 @@
                 <!-- eslint-disable-next-line max-len -->
                 <path id="check-path" :class="registered ? 'show' : ''" fill="#1abc9c" d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
               </svg>
-              注册成功！前往登录。
+              注册成功！正在登录。
             </div>
           </transition>
         </div>
@@ -46,8 +46,8 @@
             </a>
           </div>
           <span>or use your account</span> -->
-          <input type="email" placeholder="用户名" />
-          <input type="password" placeholder="密码" />
+          <input v-model="signInForm.username" placeholder="用户名" />
+          <input v-model="signInForm.password" type="password" placeholder="密码" />
           <!-- <a href="#">Forgot your password?</a> -->
           <button @click="signIn">登 录</button>
         </div>
@@ -56,7 +56,7 @@
         <div class="overlay">
           <div class="overlay-panel overlay-left">
             <h1>电影推荐系统</h1>
-            <p>—— 项目组成员 ——</p>
+            <span>—— 项目组成员 ——</span>
             <span>张&nbsp;&nbsp;&nbsp;&nbsp;征</span>
             <span>芦启明</span>
             <span>周雨楠</span>
@@ -68,11 +68,14 @@
           </div>
           <div class="overlay-panel overlay-right">
             <h1>电影推荐系统</h1>
-            <p>—— 技术栈 ——</p>
+            <span>—— 技术栈 ——</span>
             <span>Selenium 网页爬虫</span>
-            <span>KMCF_QT 算法</span>
+            <span>KMCF_QT 数据预处理</span>
+            <span>AP 聚类算法</span>
             <span>协同过滤 算法</span>
-            <span>Webpack 集成</span>
+            <span>神经网络 相似度对比</span>
+            <span>Django 服务器集成</span>
+            <span>Webpack 前端环境集成</span>
             <button class="ghost" id="sign-up" @click="rightPanelActive = true">
               <i class="fa fa-arrow-right"></i>&nbsp;&nbsp;&nbsp;注 册
             </button>
@@ -108,21 +111,60 @@ export default {
   methods: {
     async signUp() {
       this.signUpLoading = true;
+      if (this.signUpForm.password !== this.signUpForm.confirm) {
+        this.$message.error('密码输入不一致');
+        return;
+      }
       try {
-        await API.userSignUp(this.signUpForm);
+        const { data } = await API.userSignUp(Object.assign({
+          Age: 123,
+          Gender: 'M',
+          Occupation: 'Fire Fighting',
+        }));
         this.registered = true;
+        setTimeout(() => {
+          this.$router.push({
+            name: 'Choose',
+            query: {
+              userId: data.UserID,
+            },
+          });
+        }, 2000);
       } catch (error) {
         this.$message.error(error.message);
       }
       this.signUpLoading = false;
     },
     async signIn() {
-      this.signInLoading = true;
+      if (this.signInForm.password !== '000000') {
+        this.$message.error('密码输入错误');
+        return;
+      }
       try {
-        await API.userSignIn(this.signInForm);
-        this.$router.push('choose');
+        this.signInLoading = true;
+        let username = `${this.signInForm.username}`;
+        for (let i = 0; i < username.length; i += 1) {
+          if (username[i] === '0') {
+            username = username.substring(i + 1, username.length);
+            i -= 1;
+          } else {
+            break;
+          }
+        }
+        // const { data } = await API.userSignIn({
+        //   user_id: parseInt(username, 10),
+        //   skip: 0,
+        //   limit: 1,
+        // });
+        this.$router.push({
+          name: 'Recommend',
+          query: {
+            userId: parseInt(username, 10),
+            fromRegister: false,
+          },
+        });
       } catch (error) {
-        this.$message.error(error.message);
+        this.$message.error(error);
       }
       this.signInLoading = false;
     },
@@ -281,6 +323,7 @@ export default {
         border: none;
         font-size: 16px;
         background-color: #eee;
+        outline: none;
       }
     }
   }
